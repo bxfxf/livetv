@@ -6,28 +6,28 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/zjyl1994/livetv/global"
+	"livetv/global"
 )
 
-func GetYoutubeLiveM3U8(youtubeURL string) (string, error) {
-	liveURL, ok := global.URLCache.Load(youtubeURL)
+func GetYoutubeLiveM3U8(youtubeURL string, quality string) (string, error) {
+	liveURL, ok := global.URLCache.Load(youtubeURL+"_"+quality)
 	if ok {
 		return liveURL.(string), nil
 	} else {
 		log.Println("cache miss", youtubeURL)
-		liveURL, err := RealGetYoutubeLiveM3U8(youtubeURL)
+		liveURL, err := RealGetYoutubeLiveM3U8(youtubeURL,quality)
 		if err != nil {
 			log.Println(err)
 			log.Println("[YTDL]",liveURL)
 			return "", err
 		} else {
-			global.URLCache.Store(youtubeURL, liveURL)
+			global.URLCache.Store(youtubeURL+"_"+quality, liveURL)
 			return liveURL, nil
 		}
 	}
 }
 
-func RealGetYoutubeLiveM3U8(youtubeURL string) (string, error) {
+func RealGetYoutubeLiveM3U8(youtubeURL string, quality string) (string, error) {
 	YtdlCmd, err := GetConfig("ytdl_cmd")
 	if err != nil {
 		log.Println(err)
@@ -44,6 +44,10 @@ func RealGetYoutubeLiveM3U8(youtubeURL string) (string, error) {
 			ytdlArgs[i] = youtubeURL
 		}
 	}
+	if len(quality) != 0{
+		ytdlArgs = append(ytdlArgs, "-f best[height="+quality+"]") // 在切片末尾添加一个元素
+	}
+
 	_, err = exec.LookPath(YtdlCmd)
 	if err != nil {
 		log.Println(err)

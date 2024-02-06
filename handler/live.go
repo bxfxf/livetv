@@ -9,9 +9,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/zjyl1994/livetv/global"
-	"github.com/zjyl1994/livetv/service"
-	"github.com/zjyl1994/livetv/util"
+	"livetv/global"
+	"livetv/service"
+	"livetv/util"
 )
 
 func M3UHandler(c *gin.Context) {
@@ -52,7 +52,7 @@ func LiveHandler(c *gin.Context) {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		liveM3U8, err := service.GetYoutubeLiveM3U8(channelInfo.URL)
+		liveM3U8, err := service.GetYoutubeLiveM3U8(channelInfo.URL,channelInfo.Quality)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)

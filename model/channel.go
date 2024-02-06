@@ -5,4 +5,5 @@ type Channel struct {
 	Name  string
 	URL   string
 	Proxy bool
+	Quality string
 }

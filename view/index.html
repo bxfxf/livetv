@@ -22,21 +22,31 @@
           </h3>
         </div>
         <div class="panel-body">
-          <form role="form" action="/api/newchannel" method="POST">
+          <form role="form" action="/api/savechannel" method="POST">
             <div class="form-group">
               <label for="inputChannelName">Name</label>
               <input type="text" class="form-control" id="inputChannelName" name="name">
+              <input type="hidden" class="form-control" id="inputChannelId" name="id">
             </div>
             <div class="form-group">
               <label for="inputChannelLiveURL">URL</label>
               <input type="text" class="form-control" id="inputChannelLiveURL" name="url">
             </div>
+            <div class="form-group">
+              <label for="inputChannelQuality">Quality</label>
+              <select class="form-control" id="inputChannelQuality" name="quality">
+                <option value=""></option>
+                <option value="1080">1080p</option>
+                <option value="720">720p</option>
+                <option value="480">480p</option>
+              </select>
+            </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="proxy">Proxy stream
+                <input type="checkbox" checked name="proxy" id="inputChannelProxy">Proxy stream
               </label>
             </div>
-            <button type="submit" class="btn btn-default">Add Channel</button>
+            <button type="submit" class="btn btn-default">Save Channel</button>
           </form>
         </div>
         <table class="table table-striped table-condensed">
@@ -45,6 +55,7 @@
               <th>Channel</th>
               <th>Live</th>
               <th>M3U8</th>
+              <th>Quality</th>
               <th>Proxy</th>
               <th></th>
           </tr>
@@ -54,8 +65,12 @@
               <td>{{.Name}}</td>
               <td>{{.URL}}</td>
               <td>{{.M3U8}}</td>
+              <td>{{ if .Quality }} {{.Quality}}p {{ end }}</td>
               <td>{{ if .Proxy }}<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>{{ end }}</td>
-              <td><a href="/api/delchannel?id={{.ID}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+              <td>
+                <a href="#" onclick="editChannel({{.}})"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                <a href="/api/delchannel?id={{.ID}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+              </td>
           </tr>
           {{end}}
         </table>
@@ -124,8 +139,8 @@
           </div>
       </div>
       <footer class="text-center">
-        <a href="https://github.com/zjyl1994/livetv">LiveTV!</a> by <a href="https://github.com/zjyl1994">zjyl1994</a>.
-        Made with <span style="color: #e25555;">&hearts;</span> in Kwangtung.
+        <a href="https://github.com/bxfxf/livetv">GitHub LiveTV!</a>
+        Modification based on <a href="https://github.com/zjyl1994/livetv">zjyl1994's code</a>
         <a href="/log">View Log.</a>
         <a href="/api/logout">Logout.</a>
       </footer>
@@ -134,6 +149,14 @@
     <script src="/assert/js/bootstrap.min.js"></script>
     <script src="/assert/js/bootbox.all.min.js"></script>
     <script>
+      function editChannel(channelData){
+          $("#inputChannelId").val(channelData.ID)
+          $("#inputChannelName").val(channelData.Name)
+          $("#inputChannelLiveURL").val(channelData.URL)
+          $("#inputChannelQuality").val(channelData.Quality)
+          if(channelData.Proxy)$("#inputChannelProxy").prop("checked",true)
+          else $("#inputChannelProxy").prop("checked",false)
+      }
       $("#auto-fill-button").click(function(){
           $("#inputBaseURL").val(window.location.protocol + "//" + window.location.host)
       });

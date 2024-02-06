@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"strings"
 
-	"github.com/zjyl1994/livetv/util"
+	"livetv/util"
 )
 
 func M3U8Process(data string, prefixURL string) string {

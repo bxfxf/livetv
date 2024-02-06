@@ -9,10 +9,10 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/zjyl1994/livetv/model"
-	"github.com/zjyl1994/livetv/service"
-	"github.com/zjyl1994/livetv/util"
-
+	"livetv/model"
+	"livetv/service"
+	"livetv/util"
+	"livetv/global"
 	"golang.org/x/text/language"
 )
 
@@ -26,7 +26,7 @@ func IndexHandler(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/login")
 	}
 	acceptLang := c.Request.Header.Get("Accept-Language")
-	langTag, _ := language.MatchStrings(langMatcher, acceptLang)
+	langTag, _ := language.Parse(acceptLang)
 
 	baseUrl, err := service.GetConfig("base_url")
 	if err != nil {
@@ -62,6 +62,7 @@ func IndexHandler(c *gin.Context) {
 			Name:  v.Name,
 			URL:   v.URL,
 			M3U8:  baseUrl + "/live.m3u8?c=" + strconv.Itoa(int(v.ID)),
+			Quality: v.Quality,
 			Proxy: v.Proxy,
 		}
 	}
@@ -106,10 +107,11 @@ func loadConfig() (Config, error) {
 	return conf, nil
 }
 
-func NewChannelHandler(c *gin.Context) {
+func SaveChannelHandler(c *gin.Context) {
 	if sessions.Default(c).Get("logined") != true {
 		c.Redirect(http.StatusFound, "/login")
 	}
+	chId := util.String2Uint(c.PostForm("id"))
 	chName := c.PostForm("name")
 	chURL := c.PostForm("url")
 	if chName == "" || chURL == "" {
@@ -117,10 +119,13 @@ func NewChannelHandler(c *gin.Context) {
 		return
 	}
 	chProxy := c.PostForm("proxy") != ""
+	chQuality := c.PostForm("quality")
 	mch := model.Channel{
+		ID:  chId,
 		Name:  chName,
 		URL:   chURL,
 		Proxy: chProxy,
+		Quality: chQuality,
 	}
 	err := service.SaveChannel(mch)
 	if err != nil {
@@ -130,6 +135,12 @@ func NewChannelHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	if len(c.PostForm("id")) > 0 {//force refresh url cache
+		//global.URLCache.Delete(chURL+"_"+chQuality)
+		global.M3U8Cache.Delete(c.PostForm("id"))
+	}
+	
 	c.Redirect(http.StatusFound, "/")
 }
 
@@ -203,6 +214,16 @@ func LogHandler(c *gin.Context) {
 }
 
 func LoginViewHandler(c *gin.Context) {
+	acceptLang := c.Request.Header.Get("Accept-Language")
+	langTag, _ := language.Parse(acceptLang)
+
+	var templateFilename string
+	if langTag == language.Chinese {
+		templateFilename = "login-zh.html"
+	} else {
+		templateFilename = "login.html"
+	}
+
 	session := sessions.Default(c)
 	crsfToken := util.RandString(10)
 	session.Set("crsfToken", crsfToken)
@@ -214,7 +235,7 @@ func LoginViewHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.HTML(http.StatusOK, "login.html", gin.H{
+	c.HTML(http.StatusOK, templateFilename, gin.H{
 		"Crsf": crsfToken,
 	})
 }

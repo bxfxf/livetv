@@ -5,6 +5,7 @@ type Channel struct {
 	Name  string
 	URL   string
 	M3U8  string
+	Quality  string
 	Proxy bool
 }
 

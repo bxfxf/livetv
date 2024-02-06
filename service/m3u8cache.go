@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/zjyl1994/livetv/global"
-	"github.com/zjyl1994/livetv/util"
+	"livetv/global"
+	"livetv/util"
 )
 
 func LoadChannelCache() {
@@ -17,12 +17,12 @@ func LoadChannelCache() {
 	}
 	for _, v := range channels {
 		log.Println("caching", v.URL)
-		liveURL, err := RealGetYoutubeLiveM3U8(v.URL)
+		liveURL, err := RealGetYoutubeLiveM3U8(v.URL,v.Quality)
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		global.URLCache.Store(v.URL, liveURL)
+		global.URLCache.Store(v.URL+"_"+v.Quality, liveURL)
 		log.Println(v.URL, "cached")
 	}
 }
@@ -35,11 +35,11 @@ func UpdateURLCache() {
 	}
 	for _, v := range channels {
 		log.Println("caching", v.URL)
-		liveURL, err := RealGetYoutubeLiveM3U8(v.URL)
+		liveURL, err := RealGetYoutubeLiveM3U8(v.URL,v.Quality)
 		if err != nil {
 			log.Println(err)
 		} else {
-			global.URLCache.Store(v.URL, liveURL)
+			global.URLCache.Store(v.URL+"_"+v.Quality, liveURL)
 			log.Println(v.URL, "cached")
 		}
 	}

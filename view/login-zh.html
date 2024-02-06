@@ -15,18 +15,18 @@
   <body>
     <div class="login-form">
         <form role="form" action="/api/login" method="POST">
-            <h2 class="text-center">Sign in LiveTV!</h2>  
+            <h2 class="text-center">登录 LiveTV!</h2>  
             <div class="form-group">
-                <input type="password" class="form-control" id="inputPassword" name="password"  placeholder="Password" required  autofocus>
+                <input type="password" class="form-control" id="inputPassword" name="password"  placeholder="密码" required  autofocus>
             </div>
             <input type="hidden" name="crsf" value="{{.Crsf}}">
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                <button type="submit" class="btn btn-primary btn-block">登录</button>
             </div>
         </form>
         <footer class="text-center">
-          <a href="https://github.com/bxfxf/livetv">GitHub LiveTV!</a>
-          Modification based on <a href="https://github.com/zjyl1994/livetv">zjyl1994's code</a>
+            <a href="https://github.com/bxfxf/livetv">GitHub LiveTV!</a>
+            基于<a href="https://github.com/zjyl1994/livetv">zjyl1994源码</a>二次修改
         </footer>
     </div>
     <script src="/assert/js/jquery.min.js"></script>

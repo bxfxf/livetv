@@ -2,7 +2,7 @@ package route
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zjyl1994/livetv/handler"
+	"livetv/handler"
 )
 
 func Register(r *gin.Engine) {
@@ -14,7 +14,7 @@ func Register(r *gin.Engine) {
 	r.GET("/cache.txt", handler.CacheHandler)
 
 	r.GET("/", handler.IndexHandler)
-	r.POST("/api/newchannel", handler.NewChannelHandler)
+	r.POST("/api/savechannel", handler.SaveChannelHandler)
 	r.GET("/api/delchannel", handler.DeleteChannelHandler)
 	r.POST("/api/updconfig", handler.UpdateConfigHandler)
 	r.GET("/log", handler.LogHandler)

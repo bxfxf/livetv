@@ -3,7 +3,7 @@ package global
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/zjyl1994/livetv/model"
+	"livetv/model"
 )
 
 var DB *gorm.DB
