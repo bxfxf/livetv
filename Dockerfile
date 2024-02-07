@@ -2,6 +2,7 @@ FROM golang:alpine AS builder
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && apk update && apk --no-cache add build-base
 WORKDIR /go/src/github.com/bxfxf/livetv/
 COPY . . 
+ENV CGO_CFLAGS=-D_LARGEFILE64_SOURCE
 RUN GOPROXY="https://goproxy.io" GO111MODULE=on go build -o livetv .
 
 FROM alpine:latest
