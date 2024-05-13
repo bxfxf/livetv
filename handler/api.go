@@ -46,18 +46,30 @@ func IndexHandler(c *gin.Context) {
 	}
 	var m3uName string
 	if langTag == language.Chinese {
-		m3uName = "M3U 頻道列表"
+		m3uName = "M3U 頻道列表1"
 	} else {
 		m3uName = "M3U File"
 	}
-	channels := make([]Channel, len(channelModels)+1)
+	channels := make([]Channel, len(channelModels)+2)
 	channels[0] = Channel{
 		ID:   0,
 		Name: m3uName,
 		M3U8: baseUrl + "/lives.m3u",
 	}
+	channels[1] = Channel{
+		ID:   1,
+		Name: "CCTV-1",
+		URL:  "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8",
+		M3U8: baseUrl + "/live.m3u8?c=1",
+	}
+	channels[2] = Channel{
+		ID:   2,
+		Name: "CCTV-13",
+		URL:  "http://ivi.bupt.edu.cn/hls/cctv13hd.m3u8"
+		M3U8: baseUrl + "/live.m3u8?c=2",
+	}
 	for i, v := range channelModels {
-		channels[i+1] = Channel{
+		channels[i+3] = Channel{
 			ID:    v.ID,
 			Name:  v.Name,
 			URL:   v.URL,
